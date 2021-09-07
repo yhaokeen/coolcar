@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	mgutil "coolcar/shared/mongo"
 	mongotesting "coolcar/shared/mongo/testing"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +21,7 @@ func TestMongo_ResolveAccountID(t *testing.T) {
 	}
 	m := NewMongo(mc.Database("coolcar"))
 	// 固定objectid
-	m.newObjID = func() primitive.ObjectID {
+	mgutil.NewObjID = func() primitive.ObjectID {
 		objID, _ := primitive.ObjectIDFromHex("jbojbojbo")
 		return objID
 	}

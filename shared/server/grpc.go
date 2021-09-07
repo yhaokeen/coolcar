@@ -32,5 +32,6 @@ func RunGRPCServer(cfg *GRPCConfig) error {
 	s := grpc.NewServer(opts...)
 
 	cfg.RegisterFunc(s)
+	cfg.Logger.Info("server started", nameField, zap.String("addr", cfg.Addr))
 	return s.Serve(lis)
 }

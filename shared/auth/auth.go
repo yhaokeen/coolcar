@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"coolcar/shared/auth/token"
+	"coolcar/shared/id"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"google.golang.org/grpc"
@@ -53,7 +54,7 @@ func (i *interceptor) HandleReq(ctx context.Context, req interface{}, info *grpc
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "token not verify")
 	}
-	return handler(ContextWithAccountID(ctx, accountID), req)
+	return handler(ContextWithAccountID(ctx, id.AccountID(accountID)), req)
 }
 func tokenFromContext(ctx context.Context) (string, error) {
 	m, ok := metadata.FromIncomingContext(ctx)
@@ -74,13 +75,13 @@ func tokenFromContext(ctx context.Context) (string, error) {
 
 type accountIDKey struct{}
 
-func ContextWithAccountID(ctx context.Context, accountID string) context.Context {
+func ContextWithAccountID(ctx context.Context, accountID id.AccountID) context.Context {
 	return context.WithValue(ctx, accountIDKey{}, accountID)
 }
 
-func AccountIDFromContext(ctx context.Context) (string, error) {
+func AccountIDFromContext(ctx context.Context) (id.AccountID, error) {
 	v := ctx.Value(accountIDKey{})
-	aid, ok := v.(string)
+	aid, ok := v.(id.AccountID)
 	if !ok {
 		return "", status.Errorf(codes.Unauthenticated, "")
 	}
